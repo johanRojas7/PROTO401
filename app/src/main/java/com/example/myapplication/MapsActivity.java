@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -46,6 +47,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -298,6 +301,109 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+
+    public void CuandoSeOprimeBuscar(View view){
+
+        //Crear lista con objetos(lista) de rutas
+
+List<String> objetoRuta = new ArrayList<String>();
+
+objetoRuta.add("Peñas blancas Guanacaste Costa Rica-la cruz Guanacaste Costa Rica-liberia Guanacaste Costa Rica");
+objetoRuta.add("Liberia Guanacaste Costa Rica-Playa Tamarindo Guanacaste Costa Rica");
+objetoRuta.add("La Cruz Guanacaste Costa Rica-Santa Cecilia Guancaste Costa Rica");
+        //Ver si en esa lista existe alguna ruta que vaya directo
+        String resultado=AnalizarSiExtisteUnaRutaDirecta(objetoRuta);
+        //Si devolvio una ruta directa
+        if(resultado != null){
+
+Toast.makeText(getApplicationContext(),resultado,Toast.LENGTH_LONG).show();
+
+        }
+        //Si no existe buscar y crear ruta(conexiones)
+        else{
+
+            Toast.makeText(getApplicationContext(),"No devolvio nada",Toast.LENGTH_LONG).show();
+
+        }
+
+
+    }
+    public double CalculationByDistance(LatLng StartP, LatLng EndP) {
+        int Radius = 6371;// radio de la tierra en  kilómetros
+        double lat1 = StartP.latitude;
+        double lat2 = EndP.latitude;
+        double lon1 = StartP.longitude;
+        double lon2 = EndP.longitude;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1))
+                * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
+                * Math.sin(dLon / 2);
+        double c = 2 * Math.asin(Math.sqrt(a));
+        double valueResult = Radius * c;
+        double km = valueResult / 1;
+        DecimalFormat newFormat = new DecimalFormat("####");
+        int kmInDec = Integer.valueOf(newFormat.format(km));
+        double meter = valueResult % 1000;
+        int meterInDec = Integer.valueOf(newFormat.format(meter));
+        Log.i("Radius Value", "" + valueResult + "   KM  " + kmInDec
+                + " Meter   " + meterInDec);
+
+        return Radius * c;
+    }
+
+    public String AnalizarSiExtisteUnaRutaDirecta(List<String> rutas){
+        double latitudOrigen=11.07083110786867;
+        double longitudOrigen=-85.62998882881035;
+
+        double latitudDestino=10.627358674476156;
+        double longitudDestino=-85.4418181720751;
+
+        String resul= null;
+
+        int contadorDePuntos=0;
+String[] resultadoIndividual;
+        for(String resultado : rutas){
+            resultadoIndividual= resultado.split("-");
+
+for(String analisisIndividual: resultadoIndividual){
+
+    ConvertirDireccionEnLatitudYLongitud(analisisIndividual);
+
+
+    LatLng PuntoActual = new LatLng(latitud, longitud);
+    LatLng PrimerDestino= new LatLng(latitudOrigen, longitudOrigen);
+    LatLng SegundoDestino = new LatLng(latitudDestino, longitudDestino);
+
+    double PrimerDistancia = CalculationByDistance(PuntoActual,PrimerDestino);
+    double SegundaDistancia =CalculationByDistance(PuntoActual,SegundoDestino);
+
+    PrimerDistancia=PrimerDistancia*1000;
+    SegundaDistancia=SegundaDistancia*1000;
+
+
+    //SI la distancia ya sea en el primer punto o en el segundo es menor o igual a 500 metros entonces suma 1
+
+    if(PrimerDistancia <=1000 || SegundaDistancia<=1000){
+      contadorDePuntos=contadorDePuntos+1;
+    }
+
+}
+
+if(contadorDePuntos>=2){
+    //Se adjudica ruta y se sale del ciclo
+    resul= resultado;
+    break;
+
+
+}else{contadorDePuntos=0;}
+        }
+
+
+
+        return resul;
+    }
 
 
 }

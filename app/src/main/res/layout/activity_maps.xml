@@ -143,6 +143,7 @@
         android:layout_marginTop="156dp"
         android:layout_marginEnd="150dp"
         android:background="@color/colorAccent"
+        android:onClick="CuandoSeOprimeBuscar"
         android:text="Buscar"
         map:layout_constraintEnd_toEndOf="parent"
         map:layout_constraintHorizontal_bias="1.0"
