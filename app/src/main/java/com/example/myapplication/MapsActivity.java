@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 
 import android.content.res.Resources;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
@@ -51,6 +52,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -150,49 +152,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public  void CuandoSePresionaTiempoReal(View view){
-        LimpiarMarcadoresYRutasDeMapa();
-
-        String latitudOrigen="11.041500547069788";
-        String longitudOrigen="-85.62270467144855";
-        String latitudDestino="10.621058940883586";
-        String longitudDestino="-85.44338934257117";
-        String url ="https://maps.googleapis.com/maps/api/directions/json?origin="+latitudOrigen+","+longitudOrigen+"&destination="+latitudDestino+","+longitudDestino+"&key=AIzaSyDCYfnub3jihOu0bZw2c3qxRUy-cRqwBrc";
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-
-
-                try {
-                    JSONObject  jso = new JSONObject(response);
-                    trazarRuta(jso);
-                    Log.i("jsonRuta: ",""+response);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-
-        queue.add(stringRequest);
-
 
     }
 
 
-    private void trazarRuta(JSONObject jso) {
+    private void trazarRuta(JSONObject jso,int rojo,int verde,int azul) {
 
         JSONArray jRoutes;
         JSONArray jLegs;
         JSONArray jSteps;
+
 
         try {
             jRoutes = jso.getJSONArray("routes");
@@ -210,12 +179,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         String polyline = ""+((JSONObject)((JSONObject)jSteps.get(k)).get("polyline")).get("points");
                         Log.i("end",""+polyline);
                         List<LatLng> list = PolyUtil.decode(polyline);
-                        mMap.addPolyline(new PolylineOptions().addAll(list).color(Color.RED).width(8));
+                        mMap.addPolyline(new PolylineOptions().addAll(list).color(Color.argb(255,rojo,verde,azul)).width(8));
 
 
 
                     }
-
 
 
                 }
@@ -235,14 +203,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void CuandoSePresionaGenerarRuta(View view){
 
 
-        GenerarMarcadoresEnElMapa("Primer Marcador",10.273563,-84.0739102);
-        GenerarMarcadoresEnElMapa("Segundo marcador",10.279915739245865,-84.44259212625448);
 
-        TrazarRutasDeMarcadoresActualesEnElMapa(10.273563,-84.0739102,10.279915739245865,-84.44259212625448);
 
         if(view.getId()==R.id.botonGenerarRuta){
             if(cambiarRuta.isChecked()){
-            ;
+
 
 
             }else{
@@ -268,7 +233,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    public void TrazarRutasDeMarcadoresActualesEnElMapa(Double latitudInicial, Double longitudInicial, Double latitudFinal, Double longitudFinal){
+    public void PintarEnElMapa(Double latitudInicial, Double longitudInicial, Double latitudFinal, Double longitudFinal,int r,int v, int a){
+        String latitudOrigen=Double.toString(latitudInicial);
+        String longitudOrigen=Double.toString(longitudInicial);
+        String latitudDestino=Double.toString(latitudFinal);
+        String longitudDestino=Double.toString(longitudFinal);
+        String url ="https://maps.googleapis.com/maps/api/directions/json?origin="+latitudOrigen+","+longitudOrigen+"&destination="+latitudDestino+","+longitudDestino+"&key=AIzaSyDCYfnub3jihOu0bZw2c3qxRUy-cRqwBrc";
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+
+
+                try {
+                    JSONObject  jso = new JSONObject(response);
+                    trazarRuta(jso,r,v,a);
+                    Log.i("jsonRuta: ",""+response);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        queue.add(stringRequest);
+
 
 
     }
@@ -303,28 +300,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     public void CuandoSeOprimeBuscar(View view){
-
+LimpiarMarcadoresYRutasDeMapa();
         //Crear lista con objetos(lista) de rutas
 
 List<String> objetoRuta = new ArrayList<String>();
 
+
 objetoRuta.add("Peñas blancas Guanacaste Costa Rica-la cruz Guanacaste Costa Rica-liberia Guanacaste Costa Rica");
 objetoRuta.add("Liberia Guanacaste Costa Rica-Playa Tamarindo Guanacaste Costa Rica");
 objetoRuta.add("La Cruz Guanacaste Costa Rica-Santa Cecilia Guancaste Costa Rica");
-        //Ver si en esa lista existe alguna ruta que vaya directo
-        String resultado=AnalizarSiExtisteUnaRutaDirecta(objetoRuta);
-        //Si devolvio una ruta directa
-        if(resultado != null){
 
-Toast.makeText(getApplicationContext(),resultado,Toast.LENGTH_LONG).show();
+TrazarRutasObtenidasEnElMapa(ObtenerRutasDelPunto(objetoRuta));
 
-        }
-        //Si no existe buscar y crear ruta(conexiones)
-        else{
+Toast.makeText(getApplicationContext(),"Hola",Toast.LENGTH_LONG).show();
 
-            Toast.makeText(getApplicationContext(),"No devolvio nada",Toast.LENGTH_LONG).show();
 
-        }
 
 
     }
@@ -353,17 +343,17 @@ Toast.makeText(getApplicationContext(),resultado,Toast.LENGTH_LONG).show();
         return Radius * c;
     }
 
-    public String AnalizarSiExtisteUnaRutaDirecta(List<String> rutas){
-        double latitudOrigen=11.07083110786867;
-        double longitudOrigen=-85.62998882881035;
+    public List<String> ObtenerRutasDelPunto(List<String> rutas){
+        double latitudPuntoEscogido=11.07083110786867;
+        double longitudPuntoEscogido=-85.62998882881035;
 
-        double latitudDestino=10.627358674476156;
-        double longitudDestino=-85.4418181720751;
+List<String> rutasQuePasanPorElPunto = new ArrayList<String>();
 
-        String resul= null;
 
         int contadorDePuntos=0;
 String[] resultadoIndividual;
+
+
         for(String resultado : rutas){
             resultadoIndividual= resultado.split("-");
 
@@ -373,37 +363,86 @@ for(String analisisIndividual: resultadoIndividual){
 
 
     LatLng PuntoActual = new LatLng(latitud, longitud);
-    LatLng PrimerDestino= new LatLng(latitudOrigen, longitudOrigen);
-    LatLng SegundoDestino = new LatLng(latitudDestino, longitudDestino);
+    LatLng PrimerDestino= new LatLng(latitudPuntoEscogido, longitudPuntoEscogido);
+
 
     double PrimerDistancia = CalculationByDistance(PuntoActual,PrimerDestino);
-    double SegundaDistancia =CalculationByDistance(PuntoActual,SegundoDestino);
+
 
     PrimerDistancia=PrimerDistancia*1000;
-    SegundaDistancia=SegundaDistancia*1000;
+
 
 
     //SI la distancia ya sea en el primer punto o en el segundo es menor o igual a 500 metros entonces suma 1
 
-    if(PrimerDistancia <=1000 || SegundaDistancia<=1000){
-      contadorDePuntos=contadorDePuntos+1;
+    if(PrimerDistancia <=1000 ){
+     rutasQuePasanPorElPunto.add(resultado);
+     contadorDePuntos=contadorDePuntos+1;
     }
 
 }
 
-if(contadorDePuntos>=2){
-    //Se adjudica ruta y se sale del ciclo
-    resul= resultado;
+//Si ya alcanzo un maximo de 5 rutas que se salga
+            /*
+if(contadorDePuntos>=5){
+
     break;
-
-
-}else{contadorDePuntos=0;}
+}*/
         }
 
 
 
-        return resul;
+        return rutasQuePasanPorElPunto;
+    }
+
+    public  void TrazarRutasObtenidasEnElMapa(List<String> rutasObtenidas){
+        String[] resultadoIndividual;
+        double latitudPuntoActual=0;
+        double longitudPuntoActual=0;
+
+        double latitudPuntoSiguiente=0;
+        double longitudPuntoSiguiente=0;
+
+
+        int contador=0;
+
+        int r=0;
+        int v=0;
+        int a=0;
+
+for(String resultado : rutasObtenidas){
+    contador=0;
+    resultadoIndividual= resultado.split("-");
+    r=new Random().nextInt((255 - 30) + 1) + 30;
+    v=new Random().nextInt((255 - 30) + 1) + 30;
+    a=new Random().nextInt((255 - 30) + 1) + 30;
+
+    for(String analisisIndividual: resultadoIndividual){
+        ConvertirDireccionEnLatitudYLongitud(analisisIndividual);
+
+        if(contador==0){
+
+            latitudPuntoActual=latitud;
+            longitudPuntoActual=longitud;
+            contador=contador+1;
+        }
+        if(contador==1){
+            latitudPuntoSiguiente=latitud;
+            longitudPuntoSiguiente=longitud;
+            PintarEnElMapa(latitudPuntoActual,longitudPuntoActual,latitudPuntoSiguiente,longitudPuntoSiguiente,r,v,a);
+
+            latitudPuntoActual=latitudPuntoSiguiente;
+            longitudPuntoActual=longitudPuntoSiguiente;
+        }
+
+
+
+
+
     }
 
 
+}
+
+    }
 }
