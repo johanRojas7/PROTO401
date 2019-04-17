@@ -301,6 +301,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void CuandoSeOprimeBuscar(View view){
 LimpiarMarcadoresYRutasDeMapa();
+//Prueba
         //Crear lista con objetos(lista) de rutas
 
 List<String> objetoRuta = new ArrayList<String>();
