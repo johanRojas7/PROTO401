@@ -1,6 +1,9 @@
 package com.example.myapplication;
 
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -9,12 +12,14 @@ import android.location.Geocoder;
 
 import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -26,6 +31,9 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -38,6 +46,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
@@ -55,7 +64,7 @@ import java.util.List;
 import java.util.Random;
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener {
 
     public GoogleMap mMap;
     private String TAG = "so47492459";
@@ -63,6 +72,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public double latitud;
     public double longitud;
 
+    public double latitudPuntoEscogido=0;
+    public double longitudPuntoEscogido=0;
 
 
 
@@ -76,7 +87,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
 
-        cambiarRuta= findViewById(R.id.botonGenerarRuta);
+        cambiarRuta = findViewById(R.id.botonGenerarRuta);
 
 
         Places.initialize(getApplicationContext(), "AIzaSyDCYfnub3jihOu0bZw2c3qxRUy-cRqwBrc");
@@ -87,35 +98,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
+
         // Specify the types of place data to return.
         autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+
 
         // Set up a PlaceSelectionListener to handle the response.
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(@NonNull Place place) {
 
-            }
-
-            @Override
-            public void onError(@NonNull Status status) {
-
-            }
-        });
-
-
-        ////FRAGMENTE 2
-
-        AutocompleteSupportFragment autocompleteFragment2 = (AutocompleteSupportFragment)
-                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment2);
-
-        // Specify the types of place data to return.
-        autocompleteFragment2.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
-
-        // Set up a PlaceSelectionListener to handle the response.
-        autocompleteFragment2.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(@NonNull Place place) {
+              AjustarVistaDelMapaSegunCoordenadas(place.getName());
 
             }
 
@@ -125,12 +118,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+
+    }
+
+    @Override
+    public void onMapClick(LatLng punto){
+
+
+latitudPuntoEscogido=punto.latitude;
+longitudPuntoEscogido=punto.longitude;
+        LimpiarMarcadoresYRutasDeMapa();
+        GenerarMarcadoresEnElMapa("Rutas Obtenidas",punto.latitude,punto.longitude);
+
+        List<String> objetoRuta = new ArrayList<String>();
+
+
+        objetoRuta.add("Peñas blancas Guanacaste Costa Rica-la cruz Guanacaste Costa Rica-liberia Guanacaste Costa Rica");
+        objetoRuta.add("Liberia Guanacaste Costa Rica-Playa Tamarindo Guanacaste Costa Rica");
+        objetoRuta.add("La Cruz Guanacaste Costa Rica-Santa Cecilia Guancaste Costa Rica");
+
+
+        TrazarRutasObtenidasEnElMapa(ObtenerRutasDelPunto(objetoRuta));
+
+        Toast.makeText(getApplicationContext(),"Hola",Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        mMap=googleMap;
+        mMap = googleMap;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+        mMap.setOnMapClickListener(this::onMapClick);
 
         LatLng localizacionInicial = new LatLng(10.273563, -84.0739102);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(localizacionInicial,8));
@@ -155,7 +183,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    public void AjustarVistaDelMapaSegunCoordenadas(String direccion){
+        ConvertirDireccionEnLatitudYLongitud(direccion);
+        LatLng coordenadas = new LatLng(latitud, longitud);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordenadas,15));
 
+    }
     private void trazarRuta(JSONObject jso,int rojo,int verde,int azul) {
 
         JSONArray jRoutes;
@@ -298,27 +331,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-
-    public void CuandoSeOprimeBuscar(View view){
-LimpiarMarcadoresYRutasDeMapa();
-//Prueba
-        //Crear lista con objetos(lista) de rutas
-
-List<String> objetoRuta = new ArrayList<String>();
-
-
-objetoRuta.add("Peñas blancas Guanacaste Costa Rica-la cruz Guanacaste Costa Rica-liberia Guanacaste Costa Rica");
-objetoRuta.add("Liberia Guanacaste Costa Rica-Playa Tamarindo Guanacaste Costa Rica");
-objetoRuta.add("La Cruz Guanacaste Costa Rica-Santa Cecilia Guancaste Costa Rica");
-
-TrazarRutasObtenidasEnElMapa(ObtenerRutasDelPunto(objetoRuta));
-
-Toast.makeText(getApplicationContext(),"Hola",Toast.LENGTH_LONG).show();
-
-
-
-
-    }
     public double CalculationByDistance(LatLng StartP, LatLng EndP) {
         int Radius = 6371;// radio de la tierra en  kilómetros
         double lat1 = StartP.latitude;
@@ -345,8 +357,6 @@ Toast.makeText(getApplicationContext(),"Hola",Toast.LENGTH_LONG).show();
     }
 
     public List<String> ObtenerRutasDelPunto(List<String> rutas){
-        double latitudPuntoEscogido=11.07083110786867;
-        double longitudPuntoEscogido=-85.62998882881035;
 
 List<String> rutasQuePasanPorElPunto = new ArrayList<String>();
 
@@ -383,12 +393,7 @@ for(String analisisIndividual: resultadoIndividual){
 
 }
 
-//Si ya alcanzo un maximo de 5 rutas que se salga
-            /*
-if(contadorDePuntos>=5){
 
-    break;
-}*/
         }
 
 
