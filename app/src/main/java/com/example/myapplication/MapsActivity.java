@@ -163,8 +163,11 @@ longitudPuntoEscogido=punto.longitude;
 
     public  void CuandoSePresionaDetalles(View view){
 
+
+
         //Desde  maps activiy hasta detalles
         Intent siguiente = new Intent(MapsActivity.this,DetallesActivity.class);
+
         startActivity(siguiente);
 
     }
