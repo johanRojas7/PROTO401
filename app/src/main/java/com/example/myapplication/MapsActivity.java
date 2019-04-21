@@ -5,58 +5,41 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
-
-import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
-
-import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.places.AutocompleteFilter;
-import com.google.android.gms.location.places.ui.PlaceAutocomplete;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.maps.android.PolyUtil;
-
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,11 +50,9 @@ import java.util.Random;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener {
 
     public GoogleMap mMap;
-    private String TAG = "so47492459";
-    private ToggleButton cambiarRuta;
+
     public double latitud;
     public double longitud;
-
     public double latitudPuntoEscogido=0;
     public double longitudPuntoEscogido=0;
 
@@ -87,7 +68,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
 
-        cambiarRuta = findViewById(R.id.botonGenerarRuta);
 
 
         Places.initialize(getApplicationContext(), "AIzaSyDCYfnub3jihOu0bZw2c3qxRUy-cRqwBrc");
@@ -100,7 +80,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         // Specify the types of place data to return.
-        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ADDRESS));
 
 
         // Set up a PlaceSelectionListener to handle the response.
@@ -108,7 +88,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onPlaceSelected(@NonNull Place place) {
 
-              AjustarVistaDelMapaSegunCoordenadas(place.getName());
+              AjustarVistaDelMapaSegunCoordenadas(place.getAddress());
 
             }
 
@@ -133,14 +113,14 @@ longitudPuntoEscogido=punto.longitude;
         List<String> objetoRuta = new ArrayList<String>();
 
 
-        objetoRuta.add("Peñas blancas Guanacaste Costa Rica-la cruz Guanacaste Costa Rica-liberia Guanacaste Costa Rica");
-        objetoRuta.add("Liberia Guanacaste Costa Rica-Playa Tamarindo Guanacaste Costa Rica");
-        objetoRuta.add("La Cruz Guanacaste Costa Rica-Santa Cecilia Guancaste Costa Rica");
+        objetoRuta.add("11.210469352249802,-85.61205451379017<11.0730511145966,-85.6319528279177<10.628473892401459,-85.44223100553933");
+        objetoRuta.add("10.628473892401459,-85.44223100553933<10.301242932408854,-85.83901801528522");
+        objetoRuta.add("11.0730511145966,-85.6319528279177<11.061122708401172,-85.41553022892087");
 
 
         TrazarRutasObtenidasEnElMapa(ObtenerRutasDelPunto(objetoRuta));
 
-        Toast.makeText(getApplicationContext(),"Hola",Toast.LENGTH_LONG).show();
+       // Toast.makeText(getApplicationContext(),"Hola",Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -158,6 +138,8 @@ longitudPuntoEscogido=punto.longitude;
             return;
         }
         mMap.setMyLocationEnabled(true);
+
+
         mMap.setOnMapClickListener(this::onMapClick);
 
         LatLng localizacionInicial = new LatLng(10.273563, -84.0739102);
@@ -167,7 +149,7 @@ longitudPuntoEscogido=punto.longitude;
             // in a raw resource file.
             boolean success = googleMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
-                            this, R.raw.mapstyle));
+                            this, R.raw.mapa));
 
             if (!success) {
                 Log.e( "MapsActivity", "Style parsing failed.");
@@ -179,7 +161,11 @@ longitudPuntoEscogido=punto.longitude;
 
     }
 
-    public  void CuandoSePresionaTiempoReal(View view){
+    public  void CuandoSePresionaDetalles(View view){
+
+        //Desde  maps activiy hasta detalles
+        Intent siguiente = new Intent(MapsActivity.this,DetallesActivity.class);
+        startActivity(siguiente);
 
     }
 
@@ -189,6 +175,7 @@ longitudPuntoEscogido=punto.longitude;
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordenadas,15));
 
     }
+
     private void trazarRuta(JSONObject jso,int rojo,int verde,int azul) {
 
         JSONArray jRoutes;
@@ -231,26 +218,6 @@ longitudPuntoEscogido=punto.longitude;
 
     }
 
-
-
-    public void CuandoSePresionaGenerarRuta(View view){
-
-
-
-
-        if(view.getId()==R.id.botonGenerarRuta){
-            if(cambiarRuta.isChecked()){
-
-
-
-            }else{
-
-            }
-
-
-        }
-
-    }
 
     public void GenerarMarcadoresEnElMapa(String titulo,double latitud, double longitud){
 
@@ -362,15 +329,21 @@ List<String> rutasQuePasanPorElPunto = new ArrayList<String>();
 
 
         int contadorDePuntos=0;
+
 String[] resultadoIndividual;
+String[] separarCoordenadas;
 
 
         for(String resultado : rutas){
-            resultadoIndividual= resultado.split("-");
+            resultadoIndividual= resultado.split("<");
 
 for(String analisisIndividual: resultadoIndividual){
+    //Sacar los valores de latitud y longitud actul
+    separarCoordenadas= analisisIndividual.split(",");
+    latitud= Double.parseDouble(separarCoordenadas[0]);
+    longitud= Double.parseDouble(separarCoordenadas[1]);
 
-    ConvertirDireccionEnLatitudYLongitud(analisisIndividual);
+   // ConvertirDireccionEnLatitudYLongitud(analisisIndividual);
 
 
     LatLng PuntoActual = new LatLng(latitud, longitud);
@@ -386,7 +359,7 @@ for(String analisisIndividual: resultadoIndividual){
 
     //SI la distancia ya sea en el primer punto o en el segundo es menor o igual a 500 metros entonces suma 1
 
-    if(PrimerDistancia <=1000 ){
+    if(PrimerDistancia <=5000 ){
      rutasQuePasanPorElPunto.add(resultado);
      contadorDePuntos=contadorDePuntos+1;
     }
@@ -415,16 +388,20 @@ for(String analisisIndividual: resultadoIndividual){
         int r=0;
         int v=0;
         int a=0;
+        String[] separarCoordenadas;
 
 for(String resultado : rutasObtenidas){
     contador=0;
-    resultadoIndividual= resultado.split("-");
+    resultadoIndividual= resultado.split("<");
     r=new Random().nextInt((255 - 30) + 1) + 30;
     v=new Random().nextInt((255 - 30) + 1) + 30;
     a=new Random().nextInt((255 - 30) + 1) + 30;
 
     for(String analisisIndividual: resultadoIndividual){
-        ConvertirDireccionEnLatitudYLongitud(analisisIndividual);
+        separarCoordenadas= analisisIndividual.split(",");
+        latitud= Double.parseDouble(separarCoordenadas[0]);
+        longitud= Double.parseDouble(separarCoordenadas[1]);
+
 
         if(contador==0){
 

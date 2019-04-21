@@ -9,12 +9,25 @@
 >
 
 
+    <Button
+        android:id="@+id/botonDetalles"
+        android:layout_width="133dp"
+        android:layout_height="71dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:onClick="CuandoSePresionaDetalles"
+        android:text="Detalles"
+        map:layout_constraintBottom_toBottomOf="@+id/map"
+        map:layout_constraintEnd_toEndOf="parent"
+        map:layout_constraintStart_toStartOf="parent" />
+
     <android.support.v7.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="341dp"
         android:layout_height="61dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="50dp"
         android:layout_marginEnd="8dp"
         map:cardBackgroundColor="@color/cardview_light_background"
         map:layout_constraintEnd_toEndOf="parent"
@@ -45,19 +58,6 @@
     </android.support.v7.widget.CardView>
 
 
-    <ToggleButton
-        android:id="@+id/toggleButton"
-        android:layout_width="136dp"
-        android:layout_height="67dp"
-        android:layout_marginStart="1dp"
-        android:background="@color/colorAccent"
-        android:text="ToggleButton"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="@color/colorPrimary"
-        map:layout_constraintBottom_toBottomOf="parent"
-        map:layout_constraintEnd_toEndOf="parent"
-        map:layout_constraintStart_toEndOf="@+id/botonTiempoReal" />
-
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -66,38 +66,6 @@
         tools:context=".MapsActivity"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="0dp" />
-
-    <ToggleButton
-        android:id="@+id/botonGenerarRuta"
-        android:layout_width="105dp"
-        android:layout_height="67dp"
-        android:background="@color/colorAccent"
-        android:checked="false"
-
-        android:drawableBottom="@drawable/busqueda"
-        android:duplicateParentState="false"
-        android:onClick="CuandoSePresionaGenerarRuta"
-        android:text="Generar Ruta"
-        android:textColor="@color/colorPrimary"
-        android:textOff=" "
-        android:textOn="-"
-        map:layout_constraintBottom_toBottomOf="parent"
-        map:layout_constraintStart_toStartOf="parent" />
-
-    <ToggleButton
-        android:id="@+id/botonTiempoReal"
-        android:layout_width="158dp"
-        android:layout_height="67dp"
-        android:layout_marginStart="1dp"
-        android:background="@color/colorAccent"
-        android:onClick="CuandoSePresionaTiempoReal"
-        android:text="ToggleButton"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="@color/colorPrimary"
-        android:textOff="Tiempo Real"
-        android:textOn="Desactivar"
-        map:layout_constraintBottom_toBottomOf="parent"
-        map:layout_constraintStart_toEndOf="@+id/botonGenerarRuta" />
 
 
 </android.support.constraint.ConstraintLayout>
