@@ -40,6 +40,12 @@ import com.google.maps.android.PolyUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,6 +61,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public double longitud;
     public double latitudPuntoEscogido=0;
     public double longitudPuntoEscogido=0;
+   public  List<String> objetoRuta = new ArrayList<String>();
+   public ArrayList<String> listaParaDetalles = new ArrayList<String>();
 
 
 
@@ -68,7 +76,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
 
-
+        LlenaListaConRutas();
 
         Places.initialize(getApplicationContext(), "AIzaSyDCYfnub3jihOu0bZw2c3qxRUy-cRqwBrc");
 
@@ -110,17 +118,44 @@ longitudPuntoEscogido=punto.longitude;
         LimpiarMarcadoresYRutasDeMapa();
         GenerarMarcadoresEnElMapa("Rutas Obtenidas",punto.latitude,punto.longitude);
 
-        List<String> objetoRuta = new ArrayList<String>();
 
-
-        objetoRuta.add("11.210469352249802,-85.61205451379017<11.0730511145966,-85.6319528279177<10.628473892401459,-85.44223100553933");
-        objetoRuta.add("10.628473892401459,-85.44223100553933<10.301242932408854,-85.83901801528522");
-        objetoRuta.add("11.0730511145966,-85.6319528279177<11.061122708401172,-85.41553022892087");
 
 
         TrazarRutasObtenidasEnElMapa(ObtenerRutasDelPunto(objetoRuta));
 
        // Toast.makeText(getApplicationContext(),"Hola",Toast.LENGTH_LONG).show();
+    }
+
+    public void LlenaListaConRutas(){
+      //  objetoRuta.add("11.210469352249802/-85.61205451379017<11.0730511145966/-85.6319528279177<10.628473892401459/-85.44223100553933");
+      //  objetoRuta.add("10.628473892401459/-85.44223100553933<10.301242932408854/-85.83901801528522");
+       // objetoRuta.add("11.0730511145966/-85.6319528279177<11.061122708401172/-85.41553022892087");
+
+
+        // Read the raw csv file
+        InputStream is = getResources().openRawResource(R.raw.data);
+
+        // Reads text from character-input stream, buffering characters for efficient reading
+        BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+
+        // Initialization
+        String line = "";
+
+        // Handling exceptions
+        try {
+            // If buffer is not empty
+            while ((line = br.readLine()) != null) {
+                // use comma as separator columns of CSV
+                String[] cols = line.split(",");
+               objetoRuta.add( cols[1]);
+                // Print in logcat
+               //System.out.println("Coulmn 0 = '" + cols[0] + "', Column 1 = '" + cols[1] + "', Column 2: '" + cols[2] + "'");
+            }
+        } catch (IOException e) {
+            // Prints throwable details
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -165,9 +200,10 @@ longitudPuntoEscogido=punto.longitude;
 
 
 
+
         //Desde  maps activiy hasta detalles
         Intent siguiente = new Intent(MapsActivity.this,DetallesActivity.class);
-
+        siguiente.putStringArrayListExtra("Lista",listaParaDetalles);
         startActivity(siguiente);
 
     }
@@ -342,7 +378,7 @@ String[] separarCoordenadas;
 
 for(String analisisIndividual: resultadoIndividual){
     //Sacar los valores de latitud y longitud actul
-    separarCoordenadas= analisisIndividual.split(",");
+    separarCoordenadas= analisisIndividual.split("/");
     latitud= Double.parseDouble(separarCoordenadas[0]);
     longitud= Double.parseDouble(separarCoordenadas[1]);
 
@@ -377,6 +413,37 @@ for(String analisisIndividual: resultadoIndividual){
         return rutasQuePasanPorElPunto;
     }
 
+    public String ObtenerDetallesExtrasSobreRuta(String ruta){
+        String detalles="";
+
+        InputStream is = getResources().openRawResource(R.raw.data);
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+
+        String line = "";
+
+        try {
+
+            while ((line = br.readLine()) != null) {
+                String[] cols = line.split(",");
+
+                if(cols[1].equals(ruta)){
+
+                    detalles=detalles+cols[0]+","+cols[2];
+
+                }
+            }
+        } catch (IOException e) {
+            // Prints throwable details
+            e.printStackTrace();
+        }
+   return detalles;
+
+    }
+    public  void AgregarEnListaDetalles(String dato){
+
+        listaParaDetalles.add(dato);
+    }
     public  void TrazarRutasObtenidasEnElMapa(List<String> rutasObtenidas){
         String[] resultadoIndividual;
         double latitudPuntoActual=0;
@@ -401,7 +468,7 @@ for(String resultado : rutasObtenidas){
     a=new Random().nextInt((255 - 30) + 1) + 30;
 
     for(String analisisIndividual: resultadoIndividual){
-        separarCoordenadas= analisisIndividual.split(",");
+        separarCoordenadas= analisisIndividual.split("/");
         latitud= Double.parseDouble(separarCoordenadas[0]);
         longitud= Double.parseDouble(separarCoordenadas[1]);
 
@@ -417,15 +484,16 @@ for(String resultado : rutasObtenidas){
             longitudPuntoSiguiente=longitud;
             PintarEnElMapa(latitudPuntoActual,longitudPuntoActual,latitudPuntoSiguiente,longitudPuntoSiguiente,r,v,a);
 
+
             latitudPuntoActual=latitudPuntoSiguiente;
             longitudPuntoActual=longitudPuntoSiguiente;
         }
 
-
-
-
-
     }
+
+
+    AgregarEnListaDetalles(ObtenerDetallesExtrasSobreRuta(resultado)+",adulto"+","+"#FF6800");
+
 
 
 }

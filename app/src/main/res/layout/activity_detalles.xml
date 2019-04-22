@@ -22,8 +22,8 @@
 
     <TableLayout
         android:id="@+id/tablaDatos"
-        android:layout_width="239dp"
-        android:layout_height="326dp"
+        android:layout_width="322dp"
+        android:layout_height="402dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -50,17 +50,4 @@
             android:layout_height="match_parent" />
     </TableLayout>
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="8dp"
-        android:onClick="hola"
-        android:text="Button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toEndOf="@+id/botonAtras"
-        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>
