@@ -451,7 +451,7 @@ for(String analisisIndividual: resultadoIndividual){
 
         double latitudPuntoSiguiente=0;
         double longitudPuntoSiguiente=0;
-
+        String hex="";
 
         int contador=0;
 
@@ -491,8 +491,8 @@ for(String resultado : rutasObtenidas){
 
     }
 
-
-    AgregarEnListaDetalles(ObtenerDetallesExtrasSobreRuta(resultado)+",adulto"+","+"#FF6800");
+     hex = String.format("#%02x%02x%02x", r, v, a);
+    AgregarEnListaDetalles(ObtenerDetallesExtrasSobreRuta(resultado)+",adulto"+","+hex);
 
 
 

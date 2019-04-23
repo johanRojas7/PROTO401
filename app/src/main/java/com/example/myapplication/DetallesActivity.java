@@ -30,6 +30,7 @@ public class DetallesActivity extends AppCompatActivity {
         String ruta="";
         String tarifaNormal="";
         String tarifaAdulto="";
+        String color="";
         for(String resultado: lista){
             separar=  resultado.split(",");
             for(String r: separar){
@@ -46,12 +47,18 @@ public class DetallesActivity extends AppCompatActivity {
                     tarifaAdulto=r;
 
                 }
+
+                if(contador==3){
+
+                    color=r;
+
+                }
                 contador=contador+1;
 
 
             }
             contador=0;
-            LlenarTablaConDatos(ruta,tarifaNormal,tarifaAdulto,"#0594D3");
+            LlenarTablaConDatos(ruta,tarifaNormal,tarifaAdulto,color);
 
 
         }
@@ -77,7 +84,8 @@ public class DetallesActivity extends AppCompatActivity {
             textView= new TextView(getBaseContext());
             textView.setGravity(Gravity.CENTER_VERTICAL);
             textView.setPadding(20,20,20,20);
-            textView.setBackgroundResource(R.color.colorPrimary);
+            textView.setBackgroundResource(R.drawable.boton_redondo);
+
             textView.setText(cadena[i]);
             textView.setTextColor(Color.parseColor(colores));
 

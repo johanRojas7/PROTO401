@@ -31,6 +31,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:background="@drawable/boton_redondo"
         app:layout_constraintTop_toBottomOf="@+id/botonAtras">
 
         <TableRow
