@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package route.costa.myapplication;
 
 import org.junit.Test;
 

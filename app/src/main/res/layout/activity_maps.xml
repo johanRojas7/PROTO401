@@ -15,7 +15,7 @@
         android:layout_height="71dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/boton_redondo"
         android:onClick="CuandoSePresionaDetalles"
         android:text="Detalles"
@@ -23,6 +23,7 @@
         map:layout_constraintBottom_toBottomOf="@+id/map"
         map:layout_constraintEnd_toEndOf="parent"
 
+        map:layout_constraintHorizontal_bias="0.03"
         map:layout_constraintStart_toStartOf="parent" />
 
     <android.support.v7.widget.CardView
@@ -66,9 +67,25 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MapsActivity"
-        tools:layout_editor_absoluteX="0dp"
+        tools:context="route.costa.myapplication.MapsActivity"
+        tools:layout_editor_absoluteX="-78dp"
         tools:layout_editor_absoluteY="0dp" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="137dp"
+        android:layout_height="72dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/boton_redondo"
+        android:onClick="BotonLimpiarMapa"
+        android:text="Limpiar mapa"
+        android:textColor="@color/colorPrimary"
+        map:layout_constraintBottom_toBottomOf="@+id/map"
+        map:layout_constraintEnd_toEndOf="parent"
+        map:layout_constraintHorizontal_bias="0.307"
+        map:layout_constraintStart_toEndOf="@+id/botonDetalles" />
 
 
 </android.support.constraint.ConstraintLayout>

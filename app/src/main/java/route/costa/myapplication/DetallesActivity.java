@@ -1,6 +1,5 @@
-package com.example.myapplication;
+package route.costa.myapplication;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,9 +9,8 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 
-import static java.security.AccessController.getContext;
+import java.util.ArrayList;
 
 public class DetallesActivity extends AppCompatActivity {
 
@@ -22,7 +20,7 @@ public class DetallesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detalles);
 
 
-        LlenarTablaConDatos("Ruta","Tarifa Normal","Tarifa Adulto Mayor","#000000");
+        LlenarTablaConDatos("Ruta","Tarifa Normal","Tarifa Adulto Mayor","#FFFFFF");
 
         ArrayList<String> lista = (ArrayList<String> ) getIntent().getSerializableExtra("Lista");
         String[] separar;
@@ -75,7 +73,7 @@ public class DetallesActivity extends AppCompatActivity {
     public void LlenarTablaConDatos(String ruta, String tarifaNormal,String tarifaAdulto, String colores){
 
         TableLayout lista = (TableLayout)findViewById(R.id.tablaDatos);
-        String [] cadena = {ruta,tarifaNormal,tarifaAdulto,colores};
+        String [] cadena = {ruta,"₡ "+tarifaNormal,"₡ "+tarifaAdulto,colores};
         TableRow row = new TableRow(getBaseContext());
 
         TextView textView;
@@ -84,7 +82,7 @@ public class DetallesActivity extends AppCompatActivity {
             textView= new TextView(getBaseContext());
             textView.setGravity(Gravity.CENTER_VERTICAL);
             textView.setPadding(20,20,20,20);
-            textView.setBackgroundResource(R.drawable.boton_redondo);
+            textView.setBackgroundResource(R.drawable.detalles);
 
             textView.setText(cadena[i]);
             textView.setTextColor(Color.parseColor(colores));

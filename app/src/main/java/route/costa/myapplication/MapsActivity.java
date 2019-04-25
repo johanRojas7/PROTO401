@@ -1,10 +1,9 @@
-package com.example.myapplication;
+package route.costa.myapplication;
 
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
@@ -15,20 +14,20 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-import android.widget.ToggleButton;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import route.costa.myapplication.R;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.libraries.places.api.Places;
@@ -61,6 +60,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public double longitud;
     public double latitudPuntoEscogido=0;
     public double longitudPuntoEscogido=0;
+
+    public double latitudPuntoEscogidoDestino=0;
+    public double longitudPuntoEscogidoDestino=0;
+    public int contadorDePuntos=1;
    public  List<String> objetoRuta = new ArrayList<String>();
    public ArrayList<String> listaParaDetalles = new ArrayList<String>();
 
@@ -112,18 +115,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapClick(LatLng punto){
 
+double p= punto.latitude;
+double fp= punto.longitude;
 
-latitudPuntoEscogido=punto.latitude;
-longitudPuntoEscogido=punto.longitude;
-        LimpiarMarcadoresYRutasDeMapa();
-        GenerarMarcadoresEnElMapa("Rutas Obtenidas",punto.latitude,punto.longitude);
+if(contadorDePuntos==3){
+
+    LimpiarMarcadoresYRutasDeMapa();
+    contadorDePuntos=1;
+}
+
+if(contadorDePuntos==1){
+    GenerarMarcadoresEnElMapa("Origen",punto.latitude,punto.longitude);
+    latitudPuntoEscogido=punto.latitude;
+    longitudPuntoEscogido=punto.longitude;
+}
+
+
+if(contadorDePuntos==2){
+    latitudPuntoEscogidoDestino=punto.latitude;
+    longitudPuntoEscogidoDestino=punto.longitude;
+    GenerarMarcadoresEnElMapa("Destino",punto.latitude,punto.longitude);
+    TrazarRutasObtenidasEnElMapa(ObtenerRutasDelPunto(objetoRuta));
+
+}
 
 
 
-
-        TrazarRutasObtenidasEnElMapa(ObtenerRutasDelPunto(objetoRuta));
-
-       // Toast.makeText(getApplicationContext(),"Hola",Toast.LENGTH_LONG).show();
+      contadorDePuntos=contadorDePuntos+1;
     }
 
     public void LlenaListaConRutas(){
@@ -158,6 +176,11 @@ longitudPuntoEscogido=punto.longitude;
 
     }
 
+    public void BotonLimpiarMapa(View vista){
+
+
+        LimpiarMarcadoresYRutasDeMapa();
+    }
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
@@ -179,19 +202,7 @@ longitudPuntoEscogido=punto.longitude;
 
         LatLng localizacionInicial = new LatLng(10.273563, -84.0739102);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(localizacionInicial,8));
-        try {
-            // Customise the styling of the base map using a JSON object defined
-            // in a raw resource file.
-            boolean success = googleMap.setMapStyle(
-                    MapStyleOptions.loadRawResourceStyle(
-                            this, R.raw.mapa));
 
-            if (!success) {
-                Log.e( "MapsActivity", "Style parsing failed.");
-            }
-        } catch (Resources.NotFoundException e) {
-            Log.e("MapsActivity", "Can't find style. Error: ", e);
-        }
 
 
     }
@@ -367,16 +378,22 @@ longitudPuntoEscogido=punto.longitude;
 List<String> rutasQuePasanPorElPunto = new ArrayList<String>();
 
 
-        int contadorDePuntos=0;
+        int contadorA=0;
+        int contadorB=0;
 
+        int yaComparo=0;
 String[] resultadoIndividual;
 String[] separarCoordenadas;
 
 
         for(String resultado : rutas){
+            contadorA=0;
+            contadorB=0;
+
             resultadoIndividual= resultado.split("<");
 
 for(String analisisIndividual: resultadoIndividual){
+    yaComparo=0;
     //Sacar los valores de latitud y longitud actul
     separarCoordenadas= analisisIndividual.split("/");
     latitud= Double.parseDouble(separarCoordenadas[0]);
@@ -392,17 +409,38 @@ for(String analisisIndividual: resultadoIndividual){
     double PrimerDistancia = CalculationByDistance(PuntoActual,PrimerDestino);
 
 
+
+    LatLng SegundoDestino= new LatLng(latitudPuntoEscogidoDestino,longitudPuntoEscogidoDestino);
+
+    double SegundaDistancia = CalculationByDistance(PuntoActual,SegundoDestino);
+
+    SegundaDistancia=SegundaDistancia*1000;
     PrimerDistancia=PrimerDistancia*1000;
+
 
 
 
     //SI la distancia ya sea en el primer punto o en el segundo es menor o igual a 500 metros entonces suma 1
 
     if(PrimerDistancia <=5000 ){
-     rutasQuePasanPorElPunto.add(resultado);
-     contadorDePuntos=contadorDePuntos+1;
+     yaComparo=1;
+     contadorA=1;
     }
 
+    if(yaComparo==0){
+
+        if( SegundaDistancia <=5000){
+
+            contadorB=1;
+        }
+    }
+
+
+}
+
+//SI EXISTEN MAS DE DOS PUNTOS POR DONDE PASA ENTONCES AGREGAR A LISTA
+if(contadorA==1 && contadorB==1){
+    rutasQuePasanPorElPunto.add(resultado);
 }
 
 
@@ -429,7 +467,7 @@ for(String analisisIndividual: resultadoIndividual){
 
                 if(cols[1].equals(ruta)){
 
-                    detalles=detalles+cols[0]+","+cols[2];
+                    detalles=detalles+cols[0]+","+cols[2]+","+cols[3];
 
                 }
             }
@@ -492,7 +530,7 @@ for(String resultado : rutasObtenidas){
     }
 
      hex = String.format("#%02x%02x%02x", r, v, a);
-    AgregarEnListaDetalles(ObtenerDetallesExtrasSobreRuta(resultado)+",adulto"+","+hex);
+    AgregarEnListaDetalles(ObtenerDetallesExtrasSobreRuta(resultado)+","+hex);
 
 
 

@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package route.costa.myapplication;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
