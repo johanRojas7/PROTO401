@@ -1,4 +1,4 @@
-package route.costa.myapplication;
+package com.costa.myapplication;
 
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +11,9 @@ import android.widget.TextView;
 
 
 import java.util.ArrayList;
+
+import route.costa.myapplication.R;
+
 
 public class DetallesActivity extends AppCompatActivity {
 

@@ -16,7 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="route.costa.myapplication.DetallesActivity"></activity>
+        <activity android:name="com.costa.myapplication.DetallesActivity"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -30,7 +30,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name="route.costa.myapplication.MapsActivity"
+            android:name="com.costa.myapplication.MapsActivity"
             android:label="Route">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

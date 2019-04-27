@@ -6,10 +6,11 @@ android {
     defaultConfig {
         applicationId "route.costa.myapplication"
         minSdkVersion 21
-        targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        targetSdkVersion 26
+        versionCode 4
+        versionName "4.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        maxSdkVersion 28
     }
     buildTypes {
         release {
@@ -37,8 +38,8 @@ dependencies {
     implementation 'com.google.maps:google-maps-services:0.9.3'
     implementation 'com.github.jd-alexander:library:1.1.0'
     implementation 'com.android.volley:volley:1.1.1'
-    implementation 'com.google.maps.android:android-maps-utils:0.5+'
-    implementation 'com.google.android.gms:play-services-maps:15.0.1'
+    implementation 'com.google.maps.android:android-maps-utils:0.5'
+    implementation 'com.google.android.gms:play-services-maps:16.1.0'
 
     implementation 'com.google.android.gms:play-services-places:16.0.0'
     implementation 'com.google.android.libraries.places:places:1.1.0'

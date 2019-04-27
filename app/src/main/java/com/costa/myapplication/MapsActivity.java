@@ -1,4 +1,4 @@
-package route.costa.myapplication;
+package com.costa.myapplication;
 
 
 import android.Manifest;
@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -21,10 +22,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import route.costa.myapplication.R;
+
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -51,6 +53,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import route.costa.myapplication.R;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener {
 
@@ -67,16 +70,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
    public  List<String> objetoRuta = new ArrayList<String>();
    public ArrayList<String> listaParaDetalles = new ArrayList<String>();
 
+    private static final String TAG = "MapActivity";
 
+    private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
+    private static final String COURSE_LOCATION = Manifest.permission.INTERNET;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
 
+    //vars
+    private Boolean mLocationPermissionsGranted = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+       getLocationPermission();
 
 
         LlenaListaConRutas();
@@ -110,38 +117,94 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
 
+
+
+    }
+
+    private void getLocationPermission(){
+        Log.d(TAG, "getLocationPermission: getting location permissions");
+        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.INTERNET};
+
+        if(ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            if(ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                    COURSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                mLocationPermissionsGranted = true;
+                initMap();
+            }else{
+                ActivityCompat.requestPermissions(this,
+                        permissions,
+                        LOCATION_PERMISSION_REQUEST_CODE);
+            }
+        }else{
+            ActivityCompat.requestPermissions(this,
+                    permissions,
+                    LOCATION_PERMISSION_REQUEST_CODE);
+        }
+    }
+    private void initMap(){
+        Log.d(TAG, "initMap: initializing map");
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+
+        mapFragment.getMapAsync(this);
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.d(TAG, "onRequestPermissionsResult: called.");
+        mLocationPermissionsGranted = false;
+
+        switch(requestCode){
+            case LOCATION_PERMISSION_REQUEST_CODE:{
+                if(grantResults.length > 0){
+                    for(int i = 0; i < grantResults.length; i++){
+                        if(grantResults[i] != PackageManager.PERMISSION_GRANTED){
+                            mLocationPermissionsGranted = false;
+                            Log.d(TAG, "onRequestPermissionsResult: permission failed");
+                            return;
+                        }
+                    }
+                    Log.d(TAG, "onRequestPermissionsResult: permission granted");
+                    mLocationPermissionsGranted = true;
+                    //initialize our map
+                    initMap();
+                }
+            }
+        }
+    }
+    @Override
     public void onMapClick(LatLng punto){
 
-double p= punto.latitude;
-double fp= punto.longitude;
+        try {
 
-if(contadorDePuntos==3){
+            if(contadorDePuntos==3){
 
-    LimpiarMarcadoresYRutasDeMapa();
-    contadorDePuntos=1;
-}
+                LimpiarMarcadoresYRutasDeMapa();
+                contadorDePuntos=1;
+            }
 
-if(contadorDePuntos==1){
-    GenerarMarcadoresEnElMapa("Origen",punto.latitude,punto.longitude);
-    latitudPuntoEscogido=punto.latitude;
-    longitudPuntoEscogido=punto.longitude;
-}
-
-
-if(contadorDePuntos==2){
-    latitudPuntoEscogidoDestino=punto.latitude;
-    longitudPuntoEscogidoDestino=punto.longitude;
-    GenerarMarcadoresEnElMapa("Destino",punto.latitude,punto.longitude);
-    TrazarRutasObtenidasEnElMapa(ObtenerRutasDelPunto(objetoRuta));
-
-}
+            if(contadorDePuntos==1){
+                GenerarMarcadoresEnElMapa("Origen",punto.latitude,punto.longitude);
+                latitudPuntoEscogido=punto.latitude;
+                longitudPuntoEscogido=punto.longitude;
+            }
 
 
+            if(contadorDePuntos==2){
+                latitudPuntoEscogidoDestino=punto.latitude;
+                longitudPuntoEscogidoDestino=punto.longitude;
+                GenerarMarcadoresEnElMapa("Destino",punto.latitude,punto.longitude);
+                TrazarRutasObtenidasEnElMapa(ObtenerRutasDelPunto(objetoRuta));
 
-      contadorDePuntos=contadorDePuntos+1;
+            }
+
+            contadorDePuntos=contadorDePuntos+1;
+        }catch (Exception e){
+            Toast.makeText(getApplicationContext(), "Hubo un error :(", Toast.LENGTH_LONG).show();
+        }
+
+
     }
 
     public void LlenaListaConRutas(){
@@ -203,7 +266,8 @@ if(contadorDePuntos==2){
         LatLng localizacionInicial = new LatLng(10.273563, -84.0739102);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(localizacionInicial,8));
 
-
+        Toast toast1 = Toast.makeText(getApplicationContext(), "Version Beta", Toast.LENGTH_LONG);
+        toast1.show();
 
     }
 

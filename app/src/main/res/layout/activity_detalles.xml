@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="route.costa.myapplication.DetallesActivity">
+    tools:context="route.costa.myapplication.com.costa.myapplication.DetallesActivity">
 
     <Button
         android:id="@+id/botonAtras"
@@ -24,8 +24,8 @@
 
     <TableLayout
         android:id="@+id/tablaDatos"
-        android:layout_width="351dp"
-        android:layout_height="465dp"
+        android:layout_width="349dp"
+        android:layout_height="527dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="30dp"
         android:layout_marginEnd="8dp"
@@ -41,22 +41,22 @@
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/pantalla"/>
+            android:background="@drawable/pantalla" />
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/pantalla"/>
+            android:background="@drawable/pantalla" />
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/pantalla"/>
+            android:background="@drawable/pantalla" />
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/pantalla"/>
+            android:background="@drawable/pantalla" />
     </TableLayout>
 
     <TextView
