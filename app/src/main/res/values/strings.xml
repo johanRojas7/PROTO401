@@ -1,8 +1,4 @@
-<resources>
-    <string name="app_name">My Application</string>
-    <string name="title_activity_maps">Map</string>
-    <string name="title_activity_barra_navegacion">BarraNavegacion</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
-</resources>
+package com.costa.myapplication;
+
+
+    import android.Manifest;import android.content.Intent;import android.content.pm.PackageManager;import android.graphics.Color;import android.location.Address;import android.location.Geocoder;import android.support.annotation.NonNull;import android.support.v4.app.ActivityCompat;import android.support.v4.app.FragmentActi

@@ -53,6 +53,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import route.costa.myapplication.InformacionActivity;
 import route.costa.myapplication.R;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener {
@@ -148,6 +149,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
         mapFragment.getMapAsync(this);
+    }
+
+
+    public void CuandoSePresionaInfo(View vista){
+        //Desde  maps activiy hasta informaciotn
+        Intent siguiente = new Intent(MapsActivity.this, InformacionActivity.class);
+
+        startActivity(siguiente);
+
     }
 
     @Override
