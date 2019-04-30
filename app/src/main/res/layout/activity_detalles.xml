@@ -24,8 +24,8 @@
 
     <TableLayout
         android:id="@+id/tablaDatos"
-        android:layout_width="349dp"
-        android:layout_height="527dp"
+        android:layout_width="350dp"
+        android:layout_height="476dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="30dp"
         android:layout_marginEnd="8dp"
