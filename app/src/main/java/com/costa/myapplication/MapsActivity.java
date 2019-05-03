@@ -24,6 +24,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -53,6 +54,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import route.costa.myapplication.CalculadoraActivity;
 import route.costa.myapplication.InformacionActivity;
 import route.costa.myapplication.R;
 
@@ -98,6 +100,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
 
+        autocompleteFragment.setCountry("CR");
         // Specify the types of place data to return.
         autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ADDRESS));
 
@@ -202,6 +205,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
             if(contadorDePuntos==2){
+                //Vaciar lista primero
+                listaParaDetalles.clear();
                 latitudPuntoEscogidoDestino=punto.latitude;
                 longitudPuntoEscogidoDestino=punto.longitude;
                 GenerarMarcadoresEnElMapa("Destino",punto.latitude,punto.longitude);
@@ -291,6 +296,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         siguiente.putStringArrayListExtra("Lista",listaParaDetalles);
         startActivity(siguiente);
 
+    }
+
+    public void CuandoSePresionaCalculadora(View vista){
+
+        //Desde  maps activiy hasta detalles
+        Intent siguiente = new Intent(MapsActivity.this, CalculadoraActivity.class);
+        startActivity(siguiente);
     }
 
     public void AjustarVistaDelMapaSegunCoordenadas(String direccion){
@@ -611,4 +623,6 @@ for(String resultado : rutasObtenidas){
 }
 
     }
+
+
 }

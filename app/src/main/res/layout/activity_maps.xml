@@ -103,6 +103,25 @@
         map:layout_constraintStart_toStartOf="parent"
         map:layout_constraintTop_toBottomOf="@+id/cardView" />
 
+    <Button
+        android:id="@+id/botonCalculadora"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/botoninfo"
+        android:onClick="CuandoSePresionaCalculadora"
+        android:text="Calc"
+        android:textColor="@color/colorPrimary"
+        map:layout_constraintBottom_toTopOf="@+id/button"
+        map:layout_constraintEnd_toEndOf="parent"
+        map:layout_constraintHorizontal_bias="0.939"
+        map:layout_constraintStart_toStartOf="parent"
+        map:layout_constraintTop_toBottomOf="@+id/botonInfo"
+        map:layout_constraintVertical_bias="0.0" />
+
 
 </android.support.constraint.ConstraintLayout>
 

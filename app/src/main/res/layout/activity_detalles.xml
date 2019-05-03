@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="route.costa.myapplication.com.costa.myapplication.DetallesActivity">
+    tools:context="com.costa.myapplication.DetallesActivity">
 
     <Button
         android:id="@+id/botonAtras"
@@ -75,5 +75,6 @@
         app:layout_constraintStart_toEndOf="@+id/botonAtras"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.056" />
+
 
 </android.support.constraint.ConstraintLayout>
